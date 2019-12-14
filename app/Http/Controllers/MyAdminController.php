@@ -11,12 +11,9 @@ use Session;
 class MyAdminController extends Controller
 {
     public function __construct(){
-        //$this->middleware('auth');
+        $this->middleware('auth:myadmin',['except' => ['register', 'index','initial','login']]);
     }
 
-    public function index(){
-        return view('welcome');
-    }
     public function initial(){
         $admin=MyAdmin::first();
         if(!empty($admin)){
@@ -33,5 +30,41 @@ class MyAdminController extends Controller
         $req['password']=Hash::make($req['password']);
         MyAdmin::create($req->except('password_confirmation'));
         return redirect('/myadmin/'.$req['secret_key']);
+    }
+    public function index($secret){
+        if(!Auth::guard('myadmin')->check()){
+            $chk=MyAdmin::where('secret_key',$secret)->first();
+            if(empty($chk)){
+                return redirect('/');
+            }
+            return view('Auth/myadminlogin',compact('secret'));
+        }else{
+            $page="Admin DB";
+            $admincount=MyAdmin::count();
+            return view('myadmin/index',compact('page','secret','admincount'));
+        }
+    }
+    public function login(Request $request,$secret){
+        $secretmatch=MyAdmin::where('email',$request['email'])->where('secret_key',$secret)->first();
+        if(!empty($secretmatch)) {
+            if (Auth::guard('myadmin')->attempt($request->except(['_token', '_method']))) {
+                return back();
+            } else {
+                return redirect('/');
+            }
+        }else{
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'email' => ['email not match secret key in url'],
+            ]);
+            throw $error;
+        }
+    }
+    public function info($secret){
+        $page='Info';
+        return view('myadmin/info',compact('secret','page'));
+    }
+    public function master($secret){
+        $page='Master';
+        return view('myadmin/master',compact('secret','page'));
     }
 }
