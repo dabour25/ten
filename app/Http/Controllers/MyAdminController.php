@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ui\Master;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\MyAdmin;
+use App\Models\Ui\Cssfiles;
 use Session;
 
 class MyAdminController extends Controller
@@ -37,7 +39,8 @@ class MyAdminController extends Controller
             if(empty($chk)){
                 return redirect('/');
             }
-            return view('Auth/myadminlogin',compact('secret'));
+            $master=Master::all();
+            return view('Auth/myadminlogin',compact('secret','master'));
         }else{
             $page="Admin DB";
             $admincount=MyAdmin::count();
@@ -65,6 +68,53 @@ class MyAdminController extends Controller
     }
     public function master($secret){
         $page='Master';
-        return view('myadmin/master',compact('secret','page'));
+        $data=Master::all();
+        return view('myadmin/master',compact('secret','page','data'));
+    }
+    public function editmaster(Request $req,$secret){
+        $image=$req->file('icon');
+        if(!empty($image)){
+            $photosPath = public_path('/images');
+            $photoName='logo';
+            $photoName.='.'.$image->getClientOriginalExtension();
+            $image->move($photosPath,$photoName);
+        }else{
+            $img=Master::where('id',2)->first();
+            $photoName=$img->value;
+        }
+        Master::where('id',1)->update(['value'=>$req['title']]);
+        Master::where('id',2)->update(['value'=>$photoName]);
+        Master::where('id',3)->update(['value'=>$req['head']]);
+        Master::where('id',4)->update(['value'=>$req['header']]);
+        Master::where('id',5)->update(['value'=>$req['footer']]);
+        Master::where('id',6)->update(['value'=>$req['scripts']]);
+        return back();
+    }
+
+    public function cssfiles($secret){
+        $page='CSS Info';
+        $cssfiles=Cssfiles::all();
+        return view('myadmin/cssfiles',compact('secret','page','cssfiles'));
+    }
+
+    public function add_css(Request $req){
+        $this->validate($req, [
+            'cssfile'   => 'required|max:8192',
+        ]);
+        $file=$req->file('cssfile');
+        $path = public_path('/css/ui');
+        $name=$file->getClientOriginalName();
+        $chkname=Cssfiles::where('file_name',$name)->first();
+        if($chkname){
+            $error = \Illuminate\Validation\ValidationException::withMessages([
+                'file_name' => ['This File Has Been Taken Before'],
+            ]);
+            throw $error;
+        }
+        $file->move($path,$name);
+        $full_html='css/ui'."/".$name;
+        Cssfiles::insert(['file_name'=>$name,'full_html'=>$full_html]);
+        Session::put("message","Css File Saved");
+        return back();
     }
 }

@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
-    <link rel="shortcut icon" href="images/ten-logo.png">
+    <title>{{!empty($master[0]->value)? $master[0]->value : 'TEN' }}</title>
+    <link rel="shortcut icon" href="{{!empty($master[1]->value) ? asset('/images/'.$master[1]->value):asset('/images/ten-logo.png')}}">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    {!! !empty($master[2]->value)?$master[2]->value:'' !!}
 	<link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('font_awesome_5.11.2/css/all.css')}}">
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <!-- Scripts -->
 	<script src="{{asset('js/jquery.min.js')}}"></script>
 	<script src="{{ asset('js/popper.min.js')}}"></script>
@@ -25,10 +25,9 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
+    @if(empty($master[3]->value))
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -82,9 +81,19 @@
         </nav>
 
         <main class="py-4">
+            @else
+                <header>
+                    {!! $master[3]->value !!}
+                </header>
+            @endif
             @yield('content')
+            @if(empty($master[4]->value))
         </main>
     </div>
+        @else
+        {!! $master[4]->value !!}
+@endif
 </body>
+{!! $master[5]->value !!}
 <script src="{{asset('ckeditor5/ckeditor.js')}}"></script>
 </html>

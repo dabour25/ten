@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMyadminTable extends Migration
+class CreateCssFilesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateMyadminTable extends Migration
      */
     public function up()
     {
-        Schema::create('myadmin', function (Blueprint $table) {
+        Schema::create('css_files', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('email',191)->unique();
-            $table->string('password');
-            $table->string('secret_key');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('file_name');
+            $table->text('full_html');
         });
     }
 
@@ -30,6 +27,6 @@ class CreateMyadminTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('myadmin');
+        Schema::dropIfExists('css_files');
     }
 }

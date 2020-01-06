@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Session;
+//DB Connect
+use App\Models\Ui\Master;
 
 class HomeController extends Controller
 {
@@ -24,7 +26,8 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index(){
-        return view('welcome');
+        $master=Master::all();
+        return view('welcome',compact('master'));
     }
 	public function lang($lang){
         Session::put('lang', $lang);

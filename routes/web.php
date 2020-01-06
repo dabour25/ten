@@ -16,5 +16,9 @@ Route::post('/myadmin/login/{secret_key}', 'MyAdminController@login');
 Route::get('/myadmin/{secret_key}/info', 'MyAdminController@info');
 Route::resource('/myadmin/{secret_key}/admin-management', 'Core\AdminManagementController');
 Route::get('/myadmin/{secret_key}/master', 'MyAdminController@master');
+Route::post('myadmin/{secret_key}/editmaster','MyAdminController@editmaster');
+Route::post('myadmin/{secret_key}/add-css','MyAdminController@add_css');
+
+Route::get('/myadmin/{secret_key}/cssfiles', 'MyAdminController@cssfiles');
 
 Auth::routes();

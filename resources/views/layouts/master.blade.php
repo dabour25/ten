@@ -20,6 +20,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="{{ asset('admin_lte/dist/css/adminlte.min.css')}}">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <script src="{{ asset('js/popper.min.js')}}"></script>
+    <script src="{{ asset('js/bootstrap.min.js')}}"></script>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -198,9 +201,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="/myadmin/{{$secret}}/cssfiles" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Index</p>
+                                    <p>CSS Files</p>
                                 </a>
                             </li>
                         </ul>
@@ -256,6 +259,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Default to the left -->
         <strong>Copyright &copy; {{date('Y')}} <a href="/">TEN</a>.</strong> All rights reserved.
     </footer>
+    @if ($errors->any())
+        <script>
+            $( document ).ready(function() {
+                var err_html = "<ul>";
+                @foreach ($errors->all() as $error)
+                    err_html += "<li>{{ $error }}</li>";
+                @endforeach
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html: err_html
+                });
+            });
+        </script>
+    @endif
+    @if (session()->has('message'))
+        <script>
+            $( document ).ready(function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Great',
+                    text: "{{session()->pull("message")}}",
+                });
+            });
+        </script>
+    @endif
 </div>
 <!-- ./wrapper -->
 
@@ -267,6 +296,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('admin_lte/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('admin_lte/dist/js/adminlte.min.js')}}"></script>
+<script src="{{asset('sweetalert/dist/sweetalert2.all.min.js')}}"></script>
 <script src="{{asset('ckeditor5/ckeditor.js')}}"></script>
 </body>
 </html>
